@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <title>Arcade Login</title>
+</head>
+<body>
+    <div class="gioco">
+        <h1>Benvenuto nell'Arcade</h1>
+        <input type="text" id="username" placeholder="Inserisci il tuo nome">
+        <button onclick="login()">Entra e Gioca</button>
+    </div>
+
+    <script>
+        async function login() { //async x usare await sotto 
+            const user = document.getElementById('username').value; 
+            if(!user) return alert("Inserisci un nome!");
+
+            //chiamata all'API di login
+            const response = await fetch('api/login.php', { //asincrona e restituisce promise. await serve a gestire il tempo di attesa di una richiesta di rete. 
+                //senza di esso, il codice javascript cercherebbe di usare i dati del database prima ancora che il server abbia risposto
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ username: user })
+            });
+            
+            const data = await response.json();
+            if(data.status === "success") {
+                //salviamo l'ID e il nome nel browser per usarli nei giochi
+                localStorage.setItem('id_giocatore', data.id_giocatore);
+                localStorage.setItem('username', user);
+                
+                //reindirizziamo alla scelta del gioco
+                window.location.href = 'scelta_gioco.html';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <title>Pannello Admin - Arcade</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="gioco">
+        <h1>Pannello di Controllo Admin</h1>
+        <p>Gestione Utenti e Manutenzione Classifiche</p>
+        
+        <table id="tabellaUtenti" style="width:100%; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Azioni</th>
+                </tr>
+            </thead>
+            <tbody id="corpoTabella">
+                </tbody>
+        </table>
+        <br>
+        <button onclick="location.href='index.html'">Torna alla Home</button>
+    </div>
+
+    <script>
+        //carica gli utenti all'apertura della pagina
+        window.onload = caricaUtenti;
+
+        async function caricaUtenti() {
+            //usa GET per leggere la lista 
+            const response = await fetch('api/classifica.php'); 
+            const utenti = await response.json(); //array di oggetti. JavaScript trasforma quel testo in un oggetto dove le chiavi diventano proprietà
+            const corpo = document.getElementById('corpoTabella');
+            corpo.innerHTML = '';
+
+            utenti.forEach(u => {   //genera dinamicamente altre righe 
+                corpo.innerHTML += `
+                    <tr>
+                        <td>${u.id_giocatore}</td>
+                        <td>${u.nome_giocatore}</td>
+                        <td>
+                            <button onclick="resetPunti(${u.id_giocatore})">Reset Punti (PUT)</button>
+                            <button onclick="banUtente(${u.id_giocatore})" style="background:red">Ban (DELETE)</button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        async function resetPunti(id) {
+            if(!confirm("Azzerare i punti dell'utente " + id + "?")) return;
+            
+            await fetch('api/admin.php', {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ id_giocatore: id })
+            });
+            alert("Punti azzerati con successo!");
+        }
+
+        async function banUtente(id) {
+            if(!confirm("Eliminare definitivamente l'utente " + id + "?")) return;
+
+            await fetch('api/admin.php', {
+                method: 'DELETE',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ id_giocatore: id })
+            });
+            caricaUtenti(); //ricarica la lista
+        }
+    </script>
+</body>
+</html>

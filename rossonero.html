@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <title>Rosso & Nero</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="gioco"> 
+        <h1>Rosso o nero?</h1>
+        <p id="risultato">Scegli un colore per giocare!</p>
+        <button id="btnRosso" style="background-color: red;" onclick="gioca('rosso')">Rosso</button>
+        <button id="btnNero" style="background-color: black; color: white;" onclick="gioca('nero')">Nero</button>
+    </div>
+
+    <script>
+
+
+        async function gioca(sceltaUtente) {
+            
+            const colori = ['rosso', 'nero'];
+            //generazione casuale del colore vincente
+            const coloreEstratto = colori[Math.floor(Math.random() * colori.length)]; //arrotondo x difetto così seleziona sempre 0 o 1 come indici dell'array colori 
+            
+            const display = document.getElementById('risultato');
+            
+            if (sceltaUtente === coloreEstratto) {
+                display.innerText = "Hai indovinato! Era " + coloreEstratto.toUpperCase();
+                display.style.color = "green";
+                
+                //vulnerabilità: inviamo l'ID e il punteggio che vogliamo noi
+                //un utente può chiamare questa funzione dalla console: registraVittoria(1, 99999)
+                registraVittoria(localStorage.getItem('id_giocatore'), 50);
+            } else {
+                display.innerText = "Sbagliato! Era " + coloreEstratto.toUpperCase();
+                display.style.color = "red";
+            }
+        }
+
+        async function registraVittoria(id, punti) {
+            //chiamata all'API vulnerabile che abbiamo creato prima
+            await fetch('api/registra_vittoria.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    id_giocatore: id,
+                    punteggio: punti
+                })
+            });
+        }
+    </script>
+</body>
+</html>

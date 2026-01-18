@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Arcade Machine</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="tris" class="gioco"> 
+        <h1>Arcade Machine</h1>
+        <h2>Gira la ruota e vinci premi</h2>
+        <div>
+            <table>
+                <tr> 
+                    <td id="n1">0</td>
+                    <td id="n2">0</td>
+                    <td id="n3">0</td>
+                </tr>
+            </table>
+            <button id="btnGioca" onclick="gioca()">Gioca</button>
+        </div>
+    </div>
+
+    <script>
+    function gioca() {
+        const btn = document.getElementById('btnGioca');
+        btn.disabled = true; 
+
+        let giri = 0;
+        const maxGiri = 20; 
+        
+        const intervallo = setInterval(() => { //continua a chiamare la funzione ogni volta che scatta il timer
+            //genera numeri da 1 a 3 (chance 1/27)
+            const n1 = Math.floor(Math.random() * 3) + 1; //senza il +1 il computer sceglierebbe tra 0, 1 e 2. floor taglia la virgola
+            const n2 = Math.floor(Math.random() * 3) + 1;
+            const n3 = Math.floor(Math.random() * 3) + 1;
+
+            aggiornaCella('n1', n1);
+            aggiornaCella('n2', n2);
+            aggiornaCella('n3', n3);
+
+            giri++;
+
+            if (giri >= maxGiri) {
+                clearInterval(intervallo);  //resetta intervallo e la funzione non si chiama più 
+                btn.disabled = false; //riabilita il tasto gioca dopo che i numeri sono cambiati
+                
+                //verifichiamo la vittoria sui numeri finali
+                if (n1 === n2 && n2 === n3) {
+                    alert("JACKPOT!");
+                    //un attaccante può fare: localStorage.setItem('id_giocatore', '3') 
+                    //e rubare l'identità del giocatore david nel database.
+                    const idSalvato = localStorage.getItem('id_giocatore');
+                    registraVittoria(idSalvato, 600);
+                }
+            }
+        }, 100);
+    }
+
+    function aggiornaCella(id, valore) {
+        const cella = document.getElementById(id);
+        cella.innerText = valore;
+        cella.classList.remove('pop'); //cambia stile css
+        void cella.offsetWidth;  //forza il browser a ricaricarsi per aggiornare le classi e animazioni. è l'unico modo per garantire che il CSS si accorga che una classe è 
+        //stata rimossa prima di essere riaggiunta
+        cella.classList.add('pop');
+    }
+
+    //funzione REST per inviare i dati al PHP
+    async function registraVittoria(idGiocatore, punti) {
+        try {
+            //vulnerabilità: un utente può semplicemente scrivere registraVittoria(1, 999999)
+            const response = await fetch('api/registra_vittoria.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id_giocatore: idGiocatore,
+                    punteggio: punti
+                })
+            });
+            const result = await response.json();
+            //console.log("Database aggiornato:", result);
+        } catch (error) {
+            console.error("Errore nel salvataggio:", error);
+        }
+    }
+    </script>
+</body>
+</html>

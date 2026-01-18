@@ -1,0 +1,92 @@
+/* Reset di base */
+body {
+    background-color: #1a1a2e; /* Sfondo scuro tipo sala giochi */
+    color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.gioco {
+    text-align: center; /* Centra tutto il testo contenuto */
+    background-color: #16213e;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    border: 2px solid #0f3460;
+    
+    /* Assicuriamoci che il div stesso sia centrato e largo abbastanza */
+    display: inline-block; 
+    min-width: 350px;
+}
+
+h1 {
+    color: #e94560;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 0; /* Toglie lo spazio vuoto sopra il titolo */
+    margin-bottom: 20px;
+    display: block; /* Si assicura che occupi tutta la larghezza */
+    text-align: center; /* Forza il centramento del testo */
+}
+
+/* Stile della tabella (la ruota) */
+table {
+    margin: 30px auto;
+    border-collapse: separate;
+    border-spacing: 15px;
+}
+
+td {
+    background-color: #0f3460;
+    border: 3px solid #e94560;
+    border-radius: 10px;
+    width: 80px;
+    height: 80px;
+    font-size: 3rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 2px 2px #000;
+}
+
+/* Stile del Bottone */
+button {
+    background-color: #e94560;
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.1s, background-color 0.3s;
+    box-shadow: 0 5px #952e3f;
+}
+
+button:hover {
+    background-color: #ff4d6d;
+}
+
+button:active {
+    transform: translateY(4px);
+    box-shadow: 0 1px #952e3f;
+}
+
+/* Classe per l'animazione di entrata */
+.pop {
+    animation: popIn 0.2s ease-out;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* un effetto sfocatura mentre "gira" */
+.blur {
+    filter: blur(2px);
+    opacity: 0.7;
+}

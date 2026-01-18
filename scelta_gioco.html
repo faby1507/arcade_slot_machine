@@ -1,0 +1,11 @@
+<div class="gioco">
+    <link rel="stylesheet" href="style.css">
+    <h1>Ciao, <span id="nome-utente"></span>!</h1>
+    <h2>Scegli a cosa vuoi giocare:</h2>
+    <button onclick="window.location.href='tris.html'">Tris (Slot Machine)</button> 
+    <button onclick="window.location.href='rossonero.html'">Rosso o Nero</button>
+    <button onclick="window.location.href='indovina_numero.html'">Guess</button>
+</div>
+<script>
+    document.getElementById('nome-utente').innerText = localStorage.getItem('username');
+</script>

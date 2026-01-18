@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <title>Indovina il Numero</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="gioco">
+        <h1>Indovina il Numero (1-100)</h1>
+        <p id="feedback">Hai 10 tentativi!</p>
+        <input type="number" id="inputNumero" placeholder="Inserisci numero">
+        <button onclick="controllaTentativo()">Indovina</button>
+        <p>Tentativi rimasti: <span id="visualizzaTentativi">10</span></p> <!--quando il numero dei tentativi cambia, dico a JavaScript di modificare solo il contenuto dello span e non tutto il testo del paragrafo-->
+    </div>
+
+    <script>
+        //vulnerabilità: Il numero segreto è una variabile globale 
+        //accessibile da chiunque scriva 'numeroSegreto' nella console
+        let numeroSegreto = Math.floor(Math.random() * 100) + 1;
+        let tentativiRimasti = 10;
+        let tentativiFatti = 0;
+
+        function controllaTentativo() {
+            const input = document.getElementById('inputNumero');
+            const feedback = document.getElementById('feedback');
+            const displayTentativi = document.getElementById('visualizzaTentativi');
+            const scelta = parseInt(input.value); //casting. in js tutto ciò che viene scritto dentro un campo di input (anche se è un numero) viene trattato dal browser come una stringa
+
+            if (isNaN(scelta)) return; //scarta input non valido 
+
+            tentativiRimasti--;
+            tentativiFatti++;
+            displayTentativi.innerText = tentativiRimasti;
+
+            if (scelta === numeroSegreto) {
+                feedback.innerText = "GRANDE! Hai indovinato!";
+                feedback.style.color = "green";
+                //registriamo la vittoria
+                registraVittoria(localStorage.getItem('id_giocatore'), 100, tentativiFatti);
+            } else if (tentativiRimasti <= 0) {
+                feedback.innerText = "Perso! Il numero era " + numeroSegreto;
+                feedback.style.color = "red";
+            } else if (scelta < numeroSegreto) {
+                feedback.innerText = "Troppo BASSO!";
+            } else {
+                feedback.innerText = "Troppo ALTO!";
+            }
+        }
+
+        async function registraVittoria(id, punti) {
+            //chiamata all'API vulnerabile
+            await fetch('api/registra_vittoria.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    id_giocatore: id,
+                    punteggio: punti
+                })
+            });
+            alert("Punteggio salvato!");
+        }
+    </script>
+</body>
+</html>
